@@ -3,10 +3,11 @@ let T = Int(readLine()!)!
 
 for _ in 0..<T {
     var input = readLine()!.split(separator: " ").map{Int(String($0))!}
-    
+
     input.sort(by: <)
-    input.remove(at: 4)
-    input.remove(at: 0)
+    
+    input.removeLast()
+    input.removeFirst()
     
     if input.last! - input.first! >= 4 {
         print("KIN")
@@ -15,5 +16,5 @@ for _ in 0..<T {
         let sum: Int = input.reduce(0, +)
         print(sum)
     }
-    
+
 }
