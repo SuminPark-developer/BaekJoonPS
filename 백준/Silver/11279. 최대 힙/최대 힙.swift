@@ -1,4 +1,4 @@
-// MARK: - 11279번
+// MARK: - 11279번(최대 힙)
 struct MaxHeap<T: Comparable> {
     var heap: [T] = []
 
@@ -50,23 +50,32 @@ struct MaxHeap<T: Comparable> {
             let leftChildIndex = poppedIndex * 2
             let rightChildIndex = leftChildIndex + 1
             
-            if leftChildIndex >= heap.count { // 자식 노드가 없을 경우,
+            // case1. 모든(왼쪽) 자식 노드가 없는 경우, (완전이진트리는 왼쪽부터 채워지므로)
+            if leftChildIndex >= heap.count {
                 return .none
             }
             
-            if rightChildIndex >= heap.count { // 왼쪽자식 노드만 있을 경우,
+            // case2. 왼쪽 자식 노드만 있는 경우,
+            if rightChildIndex >= heap.count {
                 return heap[leftChildIndex] > heap[poppedIndex] ? .left : .none
             }
             
-            if (heap[poppedIndex] > heap[leftChildIndex]) && (heap[poppedIndex] > heap[rightChildIndex]) { // 자식노드들보다 모두 클 경우,
+            // case3. 왼쪽&오른쪽 자식 노드 모두 있는 경우
+            // case3-1. 자식들보다 자신이 모두 큰 경우(자신이 제일 큰 경우)
+            if (heap[poppedIndex] > heap[leftChildIndex]) && (heap[poppedIndex] > heap[rightChildIndex]) {
                 return .none
             }
             
-            if (heap[poppedIndex] < heap[leftChildIndex]) && (heap[poppedIndex] < heap[rightChildIndex]) { // 자식노드들이 다 큰 경우,
+            // case3-2. 자식들이 자신보다 모두 큰 경우(왼쪽과 오른쪽 자식 중, 더 큰 자식을 선별)
+            if (heap[poppedIndex] < heap[leftChildIndex]) && (heap[poppedIndex] < heap[rightChildIndex]) {
                 return heap[leftChildIndex] > heap[rightChildIndex] ? .left : .right
             }
-            // 둘 중 하나의 자식만 큰 경우,
-            return heap[leftChildIndex] > heap[poppedIndex] ? .left : .right
+            
+            // case3-3. 왼쪽과 오른쪽 자식 중, 한 자식만 자신보다 큰 경우, (= 둘 중 하나의 자식만 큰 경우)
+            if (heap[leftChildIndex] > heap[poppedIndex]) || (heap[rightChildIndex] > heap[poppedIndex]) {
+                return heap[leftChildIndex] > heap[rightChildIndex] ? .left : .right
+            }
+            return .none
         }
         
         var poppedIndex = 1
