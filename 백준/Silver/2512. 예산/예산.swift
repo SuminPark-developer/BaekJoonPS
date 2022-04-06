@@ -1,31 +1,27 @@
-// MARK: - 2512번(Binary Search)
+// MARK: - 2512번(이분탐색)
 let N = Int(readLine()!)!
-let moneyArray = readLine()!.split(separator: " ").map{Int(String($0))!}
+let moneys = readLine()!.split(separator: " ").map{Int(String($0))!}
 let M = Int(readLine()!)!
-var answerMax: Int = 0
 
-var low = 0
-var high = moneyArray.max()!
-var middle = (low + high) / 2
+var low = 1
+var high = moneys.max()!
+var answer: Int = 0
 
-func isPossible(_ middle: Int) -> Bool {
+while low <= high {
+    let middle = (low + high) / 2
     var sum: Int = 0
-    for money in moneyArray {
-        sum += min(money, middle)
-    }
-    return sum <= M
-}
-
-while low <= high { // Parametric Search & Binary Search
-    if isPossible(middle) { // 기준예산(middle)으로 충당이 가능하면,
-        low = middle + 1 // 기준예산보다 위로 다시 체크.
-        answerMax = middle
-    }
-    else { // 기준예산(middle)으로 충당이 불가능하면,
-        high = middle - 1 // 기준예산보다 밑으로 다시 체크.
+    
+    for money in moneys {
+        sum += money > middle ? middle : money
     }
     
-    middle = (low + high) / 2
+    if sum <= M {
+        low = middle + 1
+        answer = middle
+    }
+    else {
+        high = middle - 1
+    }
 }
 
-print(answerMax)
+print(answer)
