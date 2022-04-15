@@ -1,15 +1,12 @@
-// MARK: - 2748번(DP - 탑다운)
+// MARK: - 2748번(DP - 바텀업)
 let n = Int(readLine()!)!
-var cache = Array(repeating: -1, count: 91)
+var cache = Array(repeating: -1, count: n + 1)
 cache[0] = 0
 cache[1] = 1
 
-func fibo(_ num: Int) -> Int {
-    if cache[num] == -1 {
-        cache[num] = fibo(num - 1) + fibo(num - 2)
+if n >= 2 {
+    for i in 2...n {
+        cache[i] = cache[i - 1] + cache[i - 2]
     }
-    return cache[num]
 }
-
-let answer = fibo(n)
-print(answer)
+print(cache[n])
