@@ -15,9 +15,11 @@ for coin in coins {
     }
     
     for i in coin...k {
-        dp[i] = dp[i] + dp[i - coin]
-        if dp[i] >= Int(pow(2.0, 31.0)) { // 경우의 수가 2^31을 벗어나는 경우, 에러를 방지하기 위해.
+        if dp[i] + dp[i - coin] > Int(pow(2.0, 31.0)) { // 경우의 수가 2^31을 벗어나는 경우, 에러를 방지하기 위해.
             dp[i] = 0
+        }
+        else {
+            dp[i] = dp[i] + dp[i - coin]
         }
     }
 }
