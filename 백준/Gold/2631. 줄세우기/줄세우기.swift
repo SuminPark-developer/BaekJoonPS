@@ -1,23 +1,19 @@
-// MARK: - 2631번(DP - 반복문)
+// MARK: - 2631번(DP - 반복문 / LIS - 이중반복문)
 let N = Int(readLine()!)!
-var ans = Array(0...N) // https://stackoverflow.com/questions/34571043/how-to-create-an-array-with-incremented-values-in-swift
-var arr: [Int] = [0]
+var arr: [Int] = []
 for _ in 0..<N {
     arr.append(Int(readLine()!)!)
 }
 
-var dp: [[Int]] = Array(repeating: Array(repeating: 0, count: N + 1), count: N + 1)
+var dp = Array(repeating: 1, count: N) // LIS를 저장하는 dp배열.
 
-for i in 1...N {
-    for j in 1...N {
-        if ans[i] == arr[j] { // 숫자가 같으면,
-            dp[i][j] = dp[i - 1][j - 1] + 1
-        }
-        else { // 숫자가 다르면,
-            dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]) // 왼쪽과 위쪽 중 큰 값.
+for i in 1..<N {
+    for j in 0..<i {
+        if arr[j] < arr[i] { // 증가하는 배열일 때,
+            dp[i] = max(dp[i], dp[j] + 1)
         }
     }
 }
 
-let answer: Int = N - dp[N][N] // N - LCS
+let answer: Int = N - dp.max()! // N - LIS
 print(answer)
