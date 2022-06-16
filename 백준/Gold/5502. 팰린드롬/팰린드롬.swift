@@ -15,7 +15,7 @@ for i in 1...N { // 뒤 부터 돌면서,
     }
 }
 
-// LCS(최장 공통 문자열)
+// LCS(최장 공통 문자열) - 잘못됨. 반례 : "abca"
 //for i in 1...N { // 뒤 부터 돌면서,
 //    for j in 1...N { // 앞 부터 돌면서,
 //        if arr[N + 1 - i] == arr[j] {
@@ -24,8 +24,4 @@ for i in 1...N { // 뒤 부터 돌면서,
 //    }
 //}
 
-var maxValue: Int = -1
-for i in 1...N {
-    maxValue = max(maxValue, dp[i].max()!)
-}
-print(N - maxValue) // N - LCS값이 정답.
+print(N - dp[N][N]) // N - LCS값이 정답.
