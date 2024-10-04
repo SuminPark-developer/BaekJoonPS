@@ -1,44 +1,45 @@
 // MARK: - 7576번(BFS)
-class Dequeue<T> {
-    var enQueue: [T]
-    var deQueue: [T] = []
+class Deque<T> {
+    var enque: [T]
+    var deque: [T] = []
     
     var count: Int {
-        return enQueue.count + deQueue.count
+        return enque.count + deque.count
     }
     
     var isEmpty: Bool {
-        return enQueue.isEmpty && deQueue.isEmpty
+        return enque.isEmpty && deque.isEmpty
     }
     
     init(_ queue: [T]) {
-        enQueue = queue
-    }
-    
-    func pushLast(_ element: T) {
-        enQueue.append(element)
+        self.enque = queue
     }
     
     func pushFirst(_ element: T) {
-        deQueue.append(element)
+        deque.append(element)
     }
     
-    func popLast() -> T {
-        if enQueue.isEmpty {
-            enQueue = deQueue.reversed()
-            deQueue.removeAll()
-        }
-        return enQueue.popLast()!
+    func pushLast(_ element: T) {
+        enque.append(element)
     }
     
     func popFirst() -> T {
-        if deQueue.isEmpty {
-            deQueue = enQueue.reversed()
-            enQueue.removeAll()
+        if deque.isEmpty {
+            deque = enque.reversed()
+            enque.removeAll()
         }
-        return deQueue.popLast()!
+        return deque.popLast()!
+    }
+    
+    func popLast() -> T {
+        if enque.isEmpty {
+            enque = deque.reversed()
+            deque.removeAll()
+        }
+        return enque.popLast()!
     }
 }
+
 let input = readLine()!.split(separator: " ").map{Int(String($0))!}
 let (M, N) = (input[0], input[1])
 var board: [[Int]] = []
@@ -54,10 +55,11 @@ func isValidCoord(_ y: Int, _ x: Int) -> Bool {
 }
 
 let dy = [0, 1, 0, -1]
-let dx = [1, 0, -1 ,0]
-let q: Dequeue<(Int, Int)> = Dequeue([])
-
+let dx = [1, 0, -1, 0]
+let q: Deque<(Int, Int)> = Deque([])
 func bfs() {
+//func bfs(_ startY: Int, _ startX: Int) {
+//    let q = Deque([(startY, startX)])
     
     while !q.isEmpty {
         let (y, x) = q.popFirst()
@@ -66,32 +68,34 @@ func bfs() {
             let ny = y + dy[k]
             let nx = x + dx[k]
             
-            if isValidCoord(ny, nx) && (visited[ny][nx] == -1) && board[ny][nx] == 0 { // 유효범위고, 방문한 적 없고, 익지 않은 토마토가 근처이면,
-                visited[ny][nx] = visited[y][x] + 1
+            if isValidCoord(ny, nx) && (board[ny][nx] == 0) && visited[ny][nx] == -1 { // 유효범위고, 인접(익을) 토마토고, 미방문 상태면,
+                visited[ny][nx] = visited[y][x] + 1 // 익는 일자 + 1
+                board[ny][nx] = 1 // 인접 토마토도 익음 (문제풀이에 불필요)
                 q.pushLast((ny, nx))
             }
         }
     }
-    
 }
+
 
 for y in 0..<N {
     for x in 0..<M {
-        if board[y][x] == 1 { // 익은 토마토 발견 시,
-            visited[y][x] = 0
+        if board[y][x] == 1 { // 처음부터 익은 토마토면,
+            visited[y][x] = 0 // 0일 걸림.
             q.pushLast((y, x))
         }
-        else if board[y][x] == -1 { // 토마토가 없는 칸 발견 시, 접근 자체가 불가능.
-            visited[y][x] = -2 // 나중에 전체 토마토가 익었는지 체크를 위해, 미방문과 구분을 위해 -2로 둠.
+        else if board[y][x] == -1 { // 애초에 못가는 곳이면,
+            visited[y][x] = -2 // 아예 상관없는 숫자 저장.
         }
     }
 }
-
 bfs()
 
-if visited.flatMap({$0}).contains(-1) { // 미방문한 토마토가 있으면,
+let answerArray = visited.flatMap{$0}
+let temp = [1, 3, 5]
+if answerArray.contains(-1) { // 토마토가 모두 익지는 못하는 상황이면,
     print(-1)
 }
-else { // 모든 토마토가 익었다면,
-    print(visited.flatMap{$0}.max()!) // 최대값이 모두를 익게 하는 최소 일수임.
+else { // 모두 익는데 걸리는 시간
+    print(answerArray.max()!)
 }
