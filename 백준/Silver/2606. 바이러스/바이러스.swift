@@ -1,31 +1,28 @@
-// 백준 - 2606번(인접리스트 - dfs | 참고 : https://www.acmicpc.net/source/31892377)
-let N = Int(readLine()!)! // 컴퓨터의 수
-let M = Int(readLine()!)! // 컴퓨터 쌍의 수
+// MARK: - 2606번(DFS)
+let M = Int(readLine()!)!
+let N = Int(readLine()!)!
 
-var adj: [[Int]] = Array(repeating: [], count: N+1) // 인접리스트
-var visited: [Bool] = Array(repeating: false, count: N+1) // 방문 체크
-var answer: Int = 0
+var board: [[Int]] = Array(repeating: Array(repeating: 0, count: M + 1), count: M + 1)
+var visited = Array(repeating: false, count: M + 1)
 
-for _ in 0..<M {
+for _ in 0..<N {
     let input = readLine()!.split(separator: " ").map{Int(String($0))!}
-    let(a, b) = (input[0], input[1])
+    let (y, x) = (input[0], input[1])
     
-    adj[a].append(b)
-    adj[b].append(a)
-    
+    board[y][x] = 1
+    board[x][y] = 1
 }
 
 func dfs(_ index: Int) {
-    for next in adj[index] {
-        if index != next && visited[next] == false {
+    
+    for next in 1...M {
+        if board[index][next] == 1 && visited[next] == false {
             visited[next] = true
-            answer += 1
             dfs(next)
         }
     }
 }
 
-visited[1] = true
-dfs(1)
-
-print(answer)
+dfs(1) // 1번컴퓨터 감염 시작
+visited[1] = false // 1번컴퓨터는 제외
+print(visited.filter{$0 == true}.count)
