@@ -1,4 +1,4 @@
-// MARK: - 1260번(DFS, BFS)
+// MARK: - 1260번
 let input = readLine()!.split(separator: " ").map{Int(String($0))!}
 let (N, M, V) = (input[0], input[1], input[2])
 
@@ -12,21 +12,20 @@ for _ in 0..<M {
     board[x][y] = 1
 }
 
-var answerDFS: [Int] = [] // V는 무조건 첫방문 예정
-
-func dfs(_ index: Int) {
+var dfsAnswer: [Int] = []
+func dfs(_ index: Int) { // 재귀
     visited[index] = true
-    answerDFS.append(index)
+    dfsAnswer.append(index)
     
     for next in 1...N {
-        if board[index][next] == 1 && visited[next] == false { // 연결되어 있고, 미방문상태
+        if board[index][next] == 1 && visited[next] == false { // 연결 되어 있고, 미방문 상태 이면
             dfs(next)
         }
     }
 }
 
 dfs(V)
-print(answerDFS.map{String($0)}.joined(separator: " "))
+print(dfsAnswer.map{String($0)}.joined(separator: " "))
 
 
 class Deque<T> {
@@ -73,14 +72,14 @@ class Deque<T> {
 
 visited = Array(repeating: false, count: N + 1)
 var myDeque = Deque([V])
-var answerBFS: [Int] = []
+var answerBfs: [Int] = []
 
-func BFS(_ index: Int) {
+func bfs(_ index: Int) { // 덱
     visited[index] = true
     
     while !myDeque.isEmpty {
         let currentY = myDeque.popFirst()
-        answerBFS.append(currentY)
+        answerBfs.append(currentY)
         
         for next in 1...N {
             if board[currentY][next] == 1 && visited[next] == false { // 연결되어 있고, 미방문상태이면
@@ -91,6 +90,5 @@ func BFS(_ index: Int) {
     }
 }
 
-BFS(V)
-
-print(answerBFS.map{String($0)}.joined(separator: " "))
+bfs(V)
+print(answerBfs.map{String($0)}.joined(separator: " "))
