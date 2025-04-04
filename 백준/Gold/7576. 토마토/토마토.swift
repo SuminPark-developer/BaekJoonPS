@@ -1,49 +1,49 @@
 // MARK: - 7576번(BFS)
-class Deque<T> {
-    var enque: [T]
-    var deque: [T] = []
+class Dequeue<T> {
+    var enQueue: [T]
+    var deQueue: [T] = []
     
     var count: Int {
-        return enque.count + deque.count
+        return enQueue.count + deQueue.count
     }
     
     var isEmpty: Bool {
-        return enque.isEmpty && deque.isEmpty
+        return enQueue.isEmpty && deQueue.isEmpty
     }
     
     init(_ queue: [T]) {
-        self.enque = queue
-    }
-    
-    func pushFirst(_ element: T) {
-        deque.append(element)
+        enQueue = queue
     }
     
     func pushLast(_ element: T) {
-        enque.append(element)
+        enQueue.append(element)
     }
     
-    func popFirst() -> T {
-        if deque.isEmpty {
-            deque = enque.reversed()
-            enque.removeAll()
-        }
-        return deque.popLast()!
+    func pushFirst(_ element: T) {
+        deQueue.append(element)
     }
     
     func popLast() -> T {
-        if enque.isEmpty {
-            enque = deque.reversed()
-            deque.removeAll()
+        if enQueue.isEmpty {
+            enQueue = deQueue.reversed()
+            deQueue.removeAll()
         }
-        return enque.popLast()!
+        return enQueue.popLast()!
+    }
+    
+    func popFirst() -> T {
+        if deQueue.isEmpty {
+            deQueue = enQueue.reversed()
+            enQueue.removeAll()
+        }
+        return deQueue.popLast()!
     }
 }
 
 let input = readLine()!.split(separator: " ").map{Int(String($0))!}
 let (M, N) = (input[0], input[1])
+
 var board: [[Int]] = []
-var visited = Array(repeating: Array(repeating: -1, count: M), count: N)
 
 for _ in 0..<N {
     let input = readLine()!.split(separator: " ").map{Int(String($0))!}
@@ -54,13 +54,14 @@ func isValidCoord(_ y: Int, _ x: Int) -> Bool {
     return (0 <= y && y < N) && (0 <= x && x < M)
 }
 
+var visited = Array(repeating: Array(repeating: -1, count: M), count: N)
+
 let dy = [0, 1, 0, -1]
 let dx = [1, 0, -1, 0]
-let q: Deque<(Int, Int)> = Deque([])
+let q: Dequeue<(Int, Int)> = Dequeue([])
+
+var count: Int = 0
 func bfs() {
-//func bfs(_ startY: Int, _ startX: Int) {
-//    let q = Deque([(startY, startX)])
-    
     while !q.isEmpty {
         let (y, x) = q.popFirst()
         
@@ -68,34 +69,32 @@ func bfs() {
             let ny = y + dy[k]
             let nx = x + dx[k]
             
-            if isValidCoord(ny, nx) && (board[ny][nx] == 0) && visited[ny][nx] == -1 { // 유효범위고, 인접(익을) 토마토고, 미방문 상태면,
-                visited[ny][nx] = visited[y][x] + 1 // 익는 일자 + 1
-                board[ny][nx] = 1 // 인접 토마토도 익음 (문제풀이에 불필요)
+            if isValidCoord(ny, nx) && board[ny][nx] == 0 && visited[ny][nx] == -1 { // 유효 범위고, 연결되어 있고, 미방문상태이면
+                visited[ny][nx] = visited[y][x] + 1
                 q.pushLast((ny, nx))
             }
         }
     }
+    
 }
 
 
 for y in 0..<N {
     for x in 0..<M {
-        if board[y][x] == 1 { // 처음부터 익은 토마토면,
-            visited[y][x] = 0 // 0일 걸림.
+        if board[y][x] == 1 {
+            visited[y][x] = 0
             q.pushLast((y, x))
         }
-        else if board[y][x] == -1 { // 애초에 못가는 곳이면,
-            visited[y][x] = -2 // 아예 상관없는 숫자 저장.
+        if board[y][x] == -1 { // 벽인 경우,
+            visited[y][x] = -2 // 아예 다른 숫자
         }
     }
 }
 bfs()
 
-let answerArray = visited.flatMap{$0}
-let temp = [1, 3, 5]
-if answerArray.contains(-1) { // 토마토가 모두 익지는 못하는 상황이면,
+if visited.flatMap({$0}).contains(-1) { // 미방문 있는 경우
     print(-1)
 }
-else { // 모두 익는데 걸리는 시간
-    print(answerArray.max()!)
+else {
+    print(visited.flatMap{$0}.max()!)
 }
